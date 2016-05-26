@@ -1,0 +1,26 @@
+#Finding the best hospital
+best <- function(state, outcome){
+  Data <- read.csv("C:/Users/pdash/Documents/Prajna/RProgramming-Coursera/outcome-of-care-measures.csv")
+  if(!(state %in% Data$State)){
+    stop("invalid state")
+  }else{
+    Dataforstat <- Data[Data$State == state,]
+    outcome <-  gsub("(^|[[:space:]])([[:alpha:]])", "\\1\\U\\2", outcome, perl=TRUE)
+    colname <- paste("Hospital.30.Day.Death..Mortality..Rates.from", gsub(" ",".", outcome),sep=".")
+    if(!(colname %in% names(Dataforstat))){
+      stop("invalide outcome")
+    }
+    colindex <- which(colnames(Dataforstat)==colname)
+    min <- min(as.numeric(as.character(Dataforstat[,colindex])), na.rm = TRUE)
+    HospitalName   <-  Dataforstat[as.numeric(as.character(Dataforstat[,names(Dataforstat)[colindex]])) == min, ]$Hospital.Name
+    
+  }
+  if(length(HospitalName) > 1){
+    HospitalName <- sort(HospitalName)
+    
+    return(HospitalName[1])
+  }else{
+    return(HospitalName)
+  }
+ 
+}   
