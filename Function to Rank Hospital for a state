@@ -1,0 +1,31 @@
+rankhospital <- function(state, outcome, num = "best"){
+  Data <- read.csv("C:/Users/pdash/Documents/Prajna/RProgramming-Coursera/outcome-of-care-measures.csv")
+  if(!(state %in% Data$State)){
+    stop("invalid state")
+  }
+  if(outcome == "heart attack"){
+    Colname <- colnames(Data)[11]
+  }else if(outcome == "heart failure"){
+    Colname <- colnames(Data)[17]
+  }else if(outcome == "pneumonia"){
+    Colname <- colnames(Data)[23]
+  }else{
+    stop("invalid outcome")
+  }
+  DatabyState <- Data[Data$State == state, ]
+  OutcomeData <- data.frame(Hospital = DatabyState[,"Hospital.Name"],State = DatabyState[,"State"],
+                                Outcome = DatabyState[,colnames(DatabyState) == Colname])
+  OutcomeData <- OutcomeData[order(as.numeric(as.character(OutcomeData$Outcome)), OutcomeData$Hospital,decreasing=FALSE,na.last=NA),]
+  
+  if(num == "best"){
+    num = 1
+  }
+  if(num == "worst"){
+    num = nrow(OutcomeData)
+  } 
+
+  HospitalName <- OutcomeData[num, ]$Hospital
+  
+  return(HospitalName)
+  
+}
