@@ -1,0 +1,46 @@
+#Ranking Hospitals in all states
+#This can be tested with rank hospital 
+rankall <- function( outcome, num = "best"){
+Data <- read.csv("C:/Users/pdash/Documents/Prajna/RProgramming-Coursera/outcome-of-care-measures.csv")
+#   if(!(state %in% Data$State)){
+#     stop("invalid state")
+#   }
+  if(outcome == "heart attack"){
+    Colname <- colnames(Data)[11]
+  }else if(outcome == "heart failure"){
+    Colname <- colnames(Data)[17]
+  }else if(outcome == "pneumonia"){
+    Colname <- colnames(Data)[23]
+  }else{
+    stop("invalid outcome")
+  }
+  OutcomeData <- data.frame(Hospital =Data[,"Hospital.Name"],State = Data[,"State"],
+                            Outcome = Data[,colnames(Data) == Colname], Symptom = rep(outcome, nrow( OutcomeData)))
+  splitdatabystate <- split(OutcomeData, OutcomeData$State)
+  #following list returns data of outcome and death rate by state and rank them too
+ 
+  OutcomeDatabyState <- lapply( splitdatabystate , function(state) state[order(as.numeric(as.character(state$Outcome)), state$Hospital ,decreasing=FALSE,na.last=NA),])
+  
+  
+  if(num == "best"){
+    num = 1
+  }
+  if(num == "worst"){
+    for(i in 1:length(OutcomeDatabyState))
+      index[i] <- nrow(OutcomeDatabyState[[i]])
+  } 
+  Hospital <- character()
+  State <- character()
+  for(i in 1:length(OutcomeDatabyState)){
+      if(num == "worst"){
+        Hospital[i] <- as.character(OutcomeDatabyState[[i]]$Hospital[as.numeric(index[i])])
+      }else{
+        Hospital[i] <- as.character(OutcomeDatabyState[[i]]$Hospital[as.numeric(num)])
+      }
+    
+    State[i] <- as.character(OutcomeDatabyState[[i]]$State[1])
+    
+  }
+  rankall <-cbind(Hospital,State)
+  return(rankall)
+}
